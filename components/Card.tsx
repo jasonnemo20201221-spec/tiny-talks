@@ -41,11 +41,35 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Logic if we wanted to process the video in-app
-      // For now, the user just wants to jump to camera. 
-      // The file is selected here if they return.
-      // We can clear it so they can record again later.
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      // User has returned from camera with a file
+      const file = e.target.files?.[0];
+      if (file) {
+          // Since we can't force "Save to Album" silently, we offer the share sheet
+          // which typically includes "Save Video" on iOS/Android
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              try {
+                  await navigator.share({
+                      files: [file],
+                      title: '保存亲子视频',
+                      text: '点击存储视频以保存到相册'
+                  });
+              } catch (err) {
+                  // User canceled share, ignore
+              }
+          } else {
+             // Fallback for devices that don't support sharing files directly
+             const url = URL.createObjectURL(file);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = `tiny-talks-${Date.now()}.mp4`;
+             document.body.appendChild(a);
+             a.click();
+             document.body.removeChild(a);
+             URL.revokeObjectURL(url);
+          }
+      }
+      // Clear input so we can record again
       if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -55,7 +79,7 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
         <div 
           className={`
             w-full h-full rounded-[2rem] border-4 border-black shadow-cartoon 
-            flex flex-col items-center p-5 text-center justify-between
+            flex flex-col items-center p-4 text-center justify-between
             ${themeColorClass} relative overflow-hidden transition-all transform
           `}
         >
@@ -69,22 +93,22 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
           <div className="absolute -top-10 -left-10 w-32 h-32 bg-white opacity-20 rounded-full z-0"></div>
 
           {/* --- TOP SECTION: Icon & Title --- */}
-          <div className="relative z-10 w-full flex flex-col items-center shrink-0 mb-4 mt-2">
-              <div className="bg-white w-20 h-20 rounded-full border-4 border-black flex items-center justify-center text-4xl shadow-cartoon mb-3 transform hover:rotate-12 transition-transform">
+          <div className="relative z-10 w-full flex flex-col items-center shrink-0 mb-2 mt-1">
+              <div className="bg-white w-16 h-16 rounded-full border-4 border-black flex items-center justify-center text-3xl shadow-cartoon mb-2 transform hover:rotate-12 transition-transform">
                   {data.emoji}
               </div>
               
-              <h2 className="font-cartoon text-3xl text-gray-900 leading-none drop-shadow-sm tracking-wide">
+              <h2 className="font-cartoon text-2xl text-gray-900 leading-none drop-shadow-sm tracking-wide">
                   {data.title}
               </h2>
-              <span className="mt-2 bg-black text-white px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider border border-white/50 opacity-80">
+              <span className="mt-1 bg-black text-white px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wider border border-white/50 opacity-80">
                   #{data.category}
               </span>
           </div>
 
           {/* --- MIDDLE SECTION: Questions (CENTERED & RESPONSIVE) --- */}
-          {/* flex-1 ensures it takes all available space, justify-center keeps it in the middle */}
-          <div className="flex-1 w-full flex items-center justify-center z-10 px-2 py-4">
+          {/* flex-1 with center alignment ensures questions are strictly in the middle */}
+          <div className="flex-1 w-full flex items-center justify-center z-10 px-2 py-2 overflow-y-auto no-scrollbar">
               <div className="w-full">
                 {data.questions.map((q, idx) => (
                     <p 
@@ -92,7 +116,7 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
                         className={`
                             font-sans font-black text-gray-800 drop-shadow-sm
                             ${questionSizeClass}
-                            ${idx > 0 ? 'mt-6 pt-6 border-t-2 border-black/10' : ''}
+                            ${idx > 0 ? 'mt-4 pt-4 border-t-2 border-black/10' : ''}
                         `}
                     >
                         “{q}”
@@ -102,15 +126,15 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
           </div>
 
           {/* --- BOTTOM SECTION: Camera & Tips --- */}
-          <div className="relative z-10 w-full flex flex-col items-center gap-3 shrink-0 mb-1">
+          <div className="relative z-10 w-full flex flex-col items-center gap-2 shrink-0">
               
               {/* Camera Button - Centered above tips */}
               <button 
                 onClick={handleCameraClick}
-                className="bg-white text-black px-6 py-2 rounded-full border-4 border-black flex items-center gap-2 shadow-cartoon hover:scale-105 active:scale-95 transition-all group"
+                className="bg-white text-black px-5 py-2 rounded-full border-4 border-black flex items-center gap-2 shadow-cartoon hover:scale-105 active:scale-95 transition-all group z-20"
               >
-                 <span className="text-2xl group-hover:rotate-12 transition-transform">📹</span>
-                 <span className="font-cartoon font-bold text-lg">拍个视频</span>
+                 <span className="text-xl group-hover:rotate-12 transition-transform">📹</span>
+                 <span className="font-cartoon font-bold text-base">拍视频记录</span>
               </button>
               
               {/* Hidden Native File Input */}
@@ -118,21 +142,21 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
                 ref={fileInputRef}
                 type="file" 
                 accept="video/*" 
-                capture="environment" // Forces native camera intent
+                capture="environment" 
                 className="hidden"
                 onChange={handleFileChange}
               />
 
               {/* Tips Box */}
-              <div className="w-full bg-white/60 backdrop-blur-md rounded-xl p-3 border-2 border-black/10">
-                  <div className="flex items-center justify-center gap-2 mb-2 border-b border-black/10 pb-1">
-                      <span className="text-base">💡</span>
-                      <span className="font-cartoon text-sm text-gray-800 tracking-widest">爸妈锦囊</span>
+              <div className="w-full bg-white/60 backdrop-blur-md rounded-xl p-2.5 border-2 border-black/10">
+                  <div className="flex items-center justify-center gap-1 mb-1 border-b border-black/10 pb-1">
+                      <span className="text-sm">💡</span>
+                      <span className="font-cartoon text-xs text-gray-800 tracking-widest">爸妈锦囊</span>
                   </div>
-                  <div className="text-left space-y-2">
+                  <div className="text-left space-y-1.5">
                       {data.guidance.map((step, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-sm text-gray-900 font-bold leading-tight">
-                              <span className="bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                          <div key={idx} className="flex items-start gap-1.5 text-xs text-gray-900 font-bold leading-tight">
+                              <span className="bg-black text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
                                   {idx + 1}
                               </span>
                               <span className="opacity-90 font-sans">{step}</span>

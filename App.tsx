@@ -104,7 +104,7 @@ const App: React.FC = () => {
   // --- View: Settings / Landing ---
   if (!settings || (topics.length === 0 && !error)) {
     return (
-        <div className="h-screen bg-brand-cream flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="h-[100dvh] bg-brand-cream flex flex-col items-center justify-center p-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" style={{
                 backgroundImage: 'radial-gradient(#FF9F1C 2px, transparent 2px)',
                 backgroundSize: '20px 20px'
@@ -157,7 +157,7 @@ const App: React.FC = () => {
   // --- View: Error ---
   if (error) {
     return (
-        <div className="h-screen flex flex-col items-center justify-center bg-brand-cream text-center p-4">
+        <div className="h-[100dvh] flex flex-col items-center justify-center bg-brand-cream text-center p-4">
             <h2 className="text-2xl font-bold mb-4">哎呀，出错了!</h2>
             <p className="mb-8">{error}</p>
             <div className="flex gap-4">
@@ -177,11 +177,11 @@ const App: React.FC = () => {
   const isLastCard = currentIndex === topics.length - 1;
 
   return (
-    // Fixed h-screen to prevent scrolling on 9:16 mobile
-    <div className="h-screen bg-brand-cream flex flex-col font-sans overflow-hidden">
+    // Fixed 100dvh to prevent scrolling on mobile with address bars
+    <div className="h-[100dvh] bg-brand-cream flex flex-col font-sans overflow-hidden supports-[height:100dvh]:h-[100dvh]">
       
-      {/* Header - Fixed Height */}
-      <header className="px-4 py-3 flex justify-between items-center z-20 shrink-0 h-[60px]">
+      {/* Header - Compact */}
+      <header className="px-4 py-2 flex justify-between items-center z-20 shrink-0 h-[50px]">
         <div className="flex items-center gap-2" onClick={resetSettings}>
             <div className="w-8 h-8 bg-brand-orange rounded-full border-2 border-black flex items-center justify-center text-lg shadow-cartoon-hover cursor-pointer">
                 🎈
@@ -203,21 +203,21 @@ const App: React.FC = () => {
       </header>
 
       {/* Main Content Area - Flex Grow */}
-      <main className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-4 pb-2 pt-0 overflow-hidden">
+      <main className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-4 pb-2 pt-0 overflow-hidden relative">
         
         {/* Progress Bar - Compact */}
-        <div className="w-full mb-2 flex items-center gap-2 shrink-0 h-[20px]">
-            <div className="flex-1 h-3 bg-white rounded-full border-2 border-black overflow-hidden relative">
+        <div className="w-full mb-1 flex items-center gap-2 shrink-0 h-[16px]">
+            <div className="flex-1 h-2.5 bg-white rounded-full border-2 border-black overflow-hidden relative">
                 <div 
                     className="absolute top-0 left-0 h-full bg-brand-green transition-all duration-500 ease-out"
                     style={{ width: `${progressPercentage}%` }}
                 ></div>
             </div>
-            <span className="font-black text-sm w-10 text-right">{currentIndex + 1}/{topics.length}</span>
+            <span className="font-black text-xs w-8 text-right text-gray-500">{currentIndex + 1}/{topics.length}</span>
         </div>
 
         {/* Card Container - Fills remaining space */}
-        <div className="w-full flex-1 relative perspective-1000 min-h-0">
+        <div className="w-full flex-1 relative perspective-1000 min-h-0 py-1">
              {topics.map((topic, index) => (
                 index === currentIndex ? (
                     <Card key={topic.id} data={topic} isVisible={true} />
@@ -225,13 +225,13 @@ const App: React.FC = () => {
              ))}
         </div>
 
-        {/* Navigation Controls - Fixed Bottom */}
-        <div className="w-full mt-3 mb-2 flex justify-between items-center gap-3 z-20 shrink-0 h-[70px]">
+        {/* Navigation Controls - Compact Bottom */}
+        <div className="w-full mt-2 mb-1 flex justify-between items-center gap-3 z-20 shrink-0 h-[60px] pb-safe">
             <button 
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
                 className={`
-                    flex-1 h-14 rounded-2xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
+                    flex-1 h-12 rounded-xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
                     ${currentIndex === 0 
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none border-gray-400' 
                         : 'bg-white text-black shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'}
@@ -243,7 +243,7 @@ const App: React.FC = () => {
             <button 
                 onClick={handleNext}
                 className={`
-                    flex-[2] h-14 rounded-2xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
+                    flex-[2] h-12 rounded-xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
                     ${isLastCard
                         ? 'bg-brand-green text-white shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'
                         : 'bg-brand-blue text-white shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'}
