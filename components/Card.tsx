@@ -25,12 +25,36 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
   const themeColorClass = colorMap[data.colorTheme] || 'bg-brand-yellow';
   const patternUrl = data.genderTheme === 'boy' ? dinoPattern : girlPattern;
 
-  // Determine font size based on text length to keep it centered and looking good
+  // --- 优化后的字号计算逻辑 ---
   const totalLength = data.questions.join("").length;
-  let questionSizeClass = "text-2xl"; // Default
-  if (totalLength < 15) questionSizeClass = "text-4xl leading-tight";
-  else if (totalLength < 30) questionSizeClass = "text-3xl leading-snug";
-  else if (totalLength > 60) questionSizeClass = "text-xl leading-normal";
+  const questionCount = data.questions.length;
+  
+  let questionSizeClass = "text-xl leading-relaxed"; // 默认兜底大小
+
+  // 如果只有1个问题，可以使用大字体
+  if (questionCount === 1) {
+      if (totalLength <= 8) {
+          questionSizeClass = "text-4xl leading-tight"; // 极短：巨大字
+      } else if (totalLength <= 16) {
+          questionSizeClass = "text-3xl leading-snug"; // 短：大字
+      } else if (totalLength <= 32) {
+          questionSizeClass = "text-2xl leading-normal"; // 中：中字
+      } else if (totalLength <= 60) {
+          questionSizeClass = "text-xl leading-relaxed"; // 长：小字
+      } else {
+          questionSizeClass = "text-lg leading-relaxed"; // 超长：更小字
+      }
+  } 
+  // 如果有多个问题，空间被分割，整体调小一级
+  else {
+      if (totalLength <= 20) {
+          questionSizeClass = "text-2xl leading-snug"; 
+      } else if (totalLength <= 40) {
+          questionSizeClass = "text-xl leading-normal";
+      } else {
+          questionSizeClass = "text-lg leading-relaxed";
+      }
+  }
 
   if (!isVisible) return null;
 
@@ -108,15 +132,15 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
 
           {/* --- MIDDLE SECTION: Questions (CENTERED & RESPONSIVE) --- */}
           {/* flex-1 with center alignment ensures questions are strictly in the middle */}
-          <div className="flex-1 w-full flex items-center justify-center z-10 px-2 py-2 overflow-y-auto no-scrollbar">
-              <div className="w-full">
+          <div className="flex-1 w-full flex items-center justify-center z-10 px-6 overflow-hidden">
+              <div className="w-full max-h-full flex flex-col justify-center">
                 {data.questions.map((q, idx) => (
                     <p 
                         key={idx} 
                         className={`
-                            font-sans font-black text-gray-800 drop-shadow-sm
+                            font-sans font-black text-gray-800 drop-shadow-sm text-center break-words
                             ${questionSizeClass}
-                            ${idx > 0 ? 'mt-4 pt-4 border-t-2 border-black/10' : ''}
+                            ${idx > 0 ? 'mt-3 pt-3 border-t-2 border-black/10' : ''}
                         `}
                     >
                         “{q}”
