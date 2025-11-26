@@ -30,11 +30,12 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
 
   return (
     <>
-      <div className="w-full max-w-md mx-auto h-[550px] relative animate-in fade-in zoom-in duration-300">
+      {/* Changed height from fixed to flex-1 and max-h-full to occupy available space */}
+      <div className="w-full max-w-md mx-auto h-full max-h-full flex flex-col relative animate-in fade-in zoom-in duration-300">
         <div 
           className={`
-            w-full h-full rounded-[3rem] border-4 border-black shadow-cartoon-lg 
-            flex flex-col items-center p-6 text-center justify-between
+            w-full h-full rounded-[2rem] border-4 border-black shadow-cartoon 
+            flex flex-col items-center p-4 text-center justify-between
             ${themeColorClass} relative overflow-hidden transition-all transform
           `}
         >
@@ -45,11 +46,11 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
           ></div>
 
           {/* Decorative Background Circles */}
-          <div className="absolute -top-10 -left-10 w-32 h-32 bg-white opacity-20 rounded-full z-0"></div>
+          <div className="absolute -top-10 -left-10 w-24 h-24 bg-white opacity-20 rounded-full z-0"></div>
 
           {/* Header: Category & Camera Button */}
-          <div className="relative z-10 w-full flex justify-between items-start">
-              <span className="bg-black text-white px-4 py-1 rounded-full text-sm font-bold tracking-wider border-2 border-white shadow-sm">
+          <div className="relative z-10 w-full flex justify-between items-start shrink-0 mb-2">
+              <span className="bg-black text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider border-2 border-white shadow-sm">
                   #{data.category}
               </span>
               
@@ -62,36 +63,36 @@ const Card: React.FC<CardProps> = ({ data, isVisible }) => {
               </button>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col items-center justify-start w-full z-10 mt-2 overflow-y-auto no-scrollbar">
-              <div className="bg-white w-20 h-20 rounded-full border-4 border-black flex items-center justify-center text-4xl shadow-cartoon mb-4 shrink-0">
+          {/* Main Content - Scrollable if content is too long */}
+          <div className="flex-1 flex flex-col items-center justify-start w-full z-10 overflow-y-auto no-scrollbar py-2">
+              <div className="bg-white w-16 h-16 rounded-full border-4 border-black flex items-center justify-center text-3xl shadow-cartoon mb-3 shrink-0">
                   {data.emoji}
               </div>
               
-              <h2 className="text-2xl font-black text-gray-900 mb-4 leading-tight px-2 stroke-white shrink-0">
+              <h2 className="text-xl font-black text-gray-900 mb-3 leading-tight px-1 stroke-white shrink-0">
                   {data.title}
               </h2>
               
-              <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 border-4 border-black shadow-sm w-full mb-4">
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 border-4 border-black shadow-sm w-full mb-2">
                   {data.questions.map((q, idx) => (
-                      <p key={idx} className={`text-xl font-bold text-gray-800 leading-relaxed ${idx > 0 ? 'mt-3 pt-3 border-t-2 border-dashed border-gray-200' : ''}`}>
+                      <p key={idx} className={`text-lg font-bold text-gray-800 leading-relaxed ${idx > 0 ? 'mt-2 pt-2 border-t-2 border-dashed border-gray-200' : ''}`}>
                           “{q}”
                       </p>
                   ))}
               </div>
           </div>
 
-          {/* Parent Tip (Progressive Steps) - Smaller Text */}
-          <div className="relative z-10 w-full mt-2">
-              <div className="bg-white/40 backdrop-blur-md rounded-xl p-3 border-2 border-black/10">
-                  <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg">💡</span>
+          {/* Parent Tip (Progressive Steps) - Pinned to bottom */}
+          <div className="relative z-10 w-full mt-2 shrink-0">
+              <div className="bg-white/40 backdrop-blur-md rounded-xl p-2.5 border-2 border-black/10">
+                  <div className="flex items-center gap-2 mb-1">
+                      <span className="text-base">💡</span>
                       <span className="text-[10px] font-black uppercase text-gray-800 tracking-widest">爸妈锦囊</span>
                   </div>
-                  <div className="text-left space-y-1.5">
+                  <div className="text-left space-y-1">
                       {data.guidance.map((step, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-xs text-gray-900 font-semibold leading-tight">
-                              <span className="bg-black text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
+                          <div key={idx} className="flex items-start gap-1.5 text-xs text-gray-900 font-semibold leading-tight">
+                              <span className="bg-black text-white text-[9px] w-3 h-3 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 font-bold">
                                   {idx + 1}
                               </span>
                               <span className="opacity-90">{step}</span>

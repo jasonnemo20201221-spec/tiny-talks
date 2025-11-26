@@ -104,30 +104,30 @@ const App: React.FC = () => {
   // --- View: Settings / Landing ---
   if (!settings || (topics.length === 0 && !error)) {
     return (
-        <div className="min-h-screen bg-brand-cream flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="h-screen bg-brand-cream flex flex-col items-center justify-center p-6 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10" style={{
                 backgroundImage: 'radial-gradient(#FF9F1C 2px, transparent 2px)',
                 backgroundSize: '20px 20px'
             }}></div>
 
-            <div className="bg-white p-8 rounded-[2rem] border-4 border-black shadow-cartoon-lg w-full max-w-md z-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-brand-yellow mx-auto rounded-full border-4 border-black flex items-center justify-center text-4xl shadow-cartoon mb-4">
+            <div className="bg-white p-6 rounded-[2rem] border-4 border-black shadow-cartoon-lg w-full max-w-md z-10 animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col gap-6">
+                <div className="text-center">
+                    <div className="w-16 h-16 bg-brand-yellow mx-auto rounded-full border-4 border-black flex items-center justify-center text-3xl shadow-cartoon mb-3">
                         🦁
                     </div>
-                    <h1 className="text-3xl font-black text-gray-800 mb-2">TinyTalks</h1>
-                    <p className="text-gray-500 font-bold">定制今天的亲子话题</p>
+                    <h1 className="text-2xl font-black text-gray-800">TinyTalks</h1>
+                    <p className="text-gray-500 font-bold text-sm">定制今天的亲子话题</p>
                 </div>
 
                 {/* Age Selection */}
-                <div className="mb-8">
-                    <label className="block text-lg font-black text-gray-800 mb-3 text-center">宝宝今年几岁啦？</label>
-                    <div className="flex gap-4">
+                <div>
+                    <label className="block text-base font-black text-gray-800 mb-3 text-center">宝宝今年几岁啦？</label>
+                    <div className="flex gap-3">
                         {[3, 4, 5].map((age) => (
                             <button
                                 key={age}
                                 onClick={() => setTempAge(age as AgeGroup)}
-                                className={`flex-1 py-4 rounded-xl border-4 font-black text-xl transition-all ${
+                                className={`flex-1 py-3 rounded-xl border-4 font-black text-lg transition-all ${
                                     tempAge === age 
                                     ? 'bg-brand-blue border-black text-white shadow-cartoon transform -translate-y-1' 
                                     : 'bg-white border-gray-200 text-gray-400 hover:border-brand-blue/50'
@@ -145,7 +145,7 @@ const App: React.FC = () => {
 
                 <button 
                     onClick={startGeneration}
-                    className="w-full bg-brand-yellow text-black text-xl font-black py-4 rounded-xl border-4 border-black shadow-cartoon hover:shadow-cartoon-lg hover:-translate-y-1 active:translate-y-0 active:shadow-cartoon transition-all"
+                    className="w-full bg-brand-yellow text-black text-lg font-black py-4 rounded-xl border-4 border-black shadow-cartoon hover:shadow-cartoon-lg hover:-translate-y-1 active:translate-y-0 active:shadow-cartoon transition-all"
                 >
                     {(parseInt(localStorage.getItem(getStorageKey(tempAge)) || '1') > 1) ? '继续下一组话题 🚀' : '开始生成话题 ✨'}
                 </button>
@@ -157,7 +157,7 @@ const App: React.FC = () => {
   // --- View: Error ---
   if (error) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-brand-cream text-center p-4">
+        <div className="h-screen flex flex-col items-center justify-center bg-brand-cream text-center p-4">
             <h2 className="text-2xl font-bold mb-4">哎呀，出错了!</h2>
             <p className="mb-8">{error}</p>
             <div className="flex gap-4">
@@ -177,46 +177,47 @@ const App: React.FC = () => {
   const isLastCard = currentIndex === topics.length - 1;
 
   return (
-    <div className="min-h-screen bg-brand-cream flex flex-col font-sans overflow-hidden">
+    // Fixed h-screen to prevent scrolling on 9:16 mobile
+    <div className="h-screen bg-brand-cream flex flex-col font-sans overflow-hidden">
       
-      {/* Header */}
-      <header className="p-4 flex justify-between items-center z-20">
+      {/* Header - Fixed Height */}
+      <header className="px-4 py-3 flex justify-between items-center z-20 shrink-0 h-[60px]">
         <div className="flex items-center gap-2" onClick={resetSettings}>
-            <div className="w-10 h-10 bg-brand-orange rounded-full border-2 border-black flex items-center justify-center text-xl shadow-cartoon-hover cursor-pointer">
+            <div className="w-8 h-8 bg-brand-orange rounded-full border-2 border-black flex items-center justify-center text-lg shadow-cartoon-hover cursor-pointer">
                 🎈
             </div>
             <div className="flex flex-col">
-                <h1 className="text-xl font-black tracking-tight text-gray-800 leading-none">TinyTalks</h1>
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-gray-500">适龄：{settings.age}岁</span>
-                    <span className="text-xs font-black bg-black text-white px-1.5 rounded-md">第 {groupIndex}/{MAX_GROUPS} 组</span>
+                <h1 className="text-lg font-black tracking-tight text-gray-800 leading-none">TinyTalks</h1>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-gray-500">{settings.age}岁</span>
+                    <span className="text-[10px] font-black bg-black text-white px-1 rounded-md">第 {groupIndex} 组</span>
                 </div>
             </div>
         </div>
         <button 
             onClick={resetSettings}
-            className="bg-white px-3 py-2 rounded-xl border-2 border-black font-bold text-xs shadow-cartoon-hover active:translate-y-1 active:shadow-none transition-all"
+            className="bg-white px-2 py-1.5 rounded-lg border-2 border-black font-bold text-[10px] shadow-cartoon-hover active:translate-y-1 active:shadow-none transition-all"
         >
-            ⚙️ 调整年龄
+            ⚙️ 调整
         </button>
       </header>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col items-center justify-center p-4 w-full max-w-2xl mx-auto relative">
+      {/* Main Content Area - Flex Grow */}
+      <main className="flex-1 flex flex-col w-full max-w-2xl mx-auto px-4 pb-2 pt-0 overflow-hidden">
         
-        {/* Progress Bar */}
-        <div className="w-full max-w-md mb-4 flex items-center gap-3">
-            <div className="flex-1 h-4 bg-white rounded-full border-2 border-black overflow-hidden relative">
+        {/* Progress Bar - Compact */}
+        <div className="w-full mb-2 flex items-center gap-2 shrink-0 h-[20px]">
+            <div className="flex-1 h-3 bg-white rounded-full border-2 border-black overflow-hidden relative">
                 <div 
                     className="absolute top-0 left-0 h-full bg-brand-green transition-all duration-500 ease-out"
                     style={{ width: `${progressPercentage}%` }}
                 ></div>
             </div>
-            <span className="font-black text-lg w-12 text-right">{currentIndex + 1}/{topics.length}</span>
+            <span className="font-black text-sm w-10 text-right">{currentIndex + 1}/{topics.length}</span>
         </div>
 
-        {/* Card Container */}
-        <div className="w-full relative perspective-1000">
+        {/* Card Container - Fills remaining space */}
+        <div className="w-full flex-1 relative perspective-1000 min-h-0">
              {topics.map((topic, index) => (
                 index === currentIndex ? (
                     <Card key={topic.id} data={topic} isVisible={true} />
@@ -224,25 +225,25 @@ const App: React.FC = () => {
              ))}
         </div>
 
-        {/* Navigation Controls */}
-        <div className="w-full max-w-md mt-6 flex justify-between items-center gap-4 z-20">
+        {/* Navigation Controls - Fixed Bottom */}
+        <div className="w-full mt-3 mb-2 flex justify-between items-center gap-3 z-20 shrink-0 h-[70px]">
             <button 
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
                 className={`
-                    flex-1 py-4 rounded-2xl border-4 border-black font-black text-xl transition-all
+                    flex-1 h-14 rounded-2xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
                     ${currentIndex === 0 
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none border-gray-400' 
                         : 'bg-white text-black shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'}
                 `}
             >
-                ⬅️ 上一个
+                ⬅️
             </button>
 
             <button 
                 onClick={handleNext}
                 className={`
-                    flex-1 py-4 rounded-2xl border-4 border-black font-black text-xl transition-all
+                    flex-[2] h-14 rounded-2xl border-4 border-black font-black text-lg transition-all flex items-center justify-center
                     ${isLastCard
                         ? 'bg-brand-green text-white shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'
                         : 'bg-brand-blue text-white shadow-cartoon hover:-translate-y-1 hover:shadow-cartoon-lg active:translate-y-0 active:shadow-cartoon'}
@@ -255,7 +256,7 @@ const App: React.FC = () => {
       </main>
 
       {/* Footer Decoration */}
-      <div className="fixed bottom-0 left-0 w-full h-4 bg-repeat-x opacity-30 pointer-events-none z-0" style={{
+      <div className="fixed bottom-0 left-0 w-full h-2 bg-repeat-x opacity-30 pointer-events-none z-0" style={{
         backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)',
         backgroundSize: '10px 10px'
       }}></div>
